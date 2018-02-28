@@ -32,7 +32,14 @@
     * Map phase: a user specified __map-function__ is applied separately to each input key-value pair and procudes other key-value pairs referred as __intermediate key-value pairs__
     * Reduce phase: the __intermediate key-value pairs__ are __grouped by key__ and a user-specified __reduce function__ is applied separately to each group of key-value pairs with the same key, producing other key-value pairs which is the output of the round
 
-[comment]: <> notes from slides with images
+## MapReduce Round
+
+![MapReduceROund](immagini/MapReduceRound.png)
+
+* Starts and ends in HDFS (_Hadoop Distributed File System)
+* Data are split in chunks
+* Workers are actual machines
+* local disks for intermediate files are the memory of the workers
 
 ## Specification of a MapReduce (MR) algorithm
 

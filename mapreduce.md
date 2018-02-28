@@ -41,6 +41,14 @@
 * Workers are actual machines
 * local disks for intermediate files are the memory of the workers
 
+## Dealing with faults
+
+* The Distributed File System is fault-tolerant
+* Master pings workers periodically to detect failures
+* Worker failure:
+    * Map tasks completed or in-progress at failed worker are reset to idle and will be rescheduled. Note that even if a map task is completed, the failure of the worker makes its output unavailable to reduce tasks, hence it must be rescheduled.
+    * Reduce tasks in-progress at failed worker are reset to idle and will be rescheduled.
+* Master failure: the whole MapReduce task is aborted
 ## Specification of a MapReduce (MR) algorithm
 
 1. Specify what the input and the output are

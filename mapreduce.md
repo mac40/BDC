@@ -112,3 +112,46 @@ Let N<sub>i</sub> be the number ov words in D<sub>i</sub>. The optimization yiel
 __Observation__:
 * The sublinear local space requirement is satisfied as long as N<sub>i</sub> = o(N) for each i, and k = o(N)
 * by treating each document as an individual key-value pair we have that for any algorithm M<sub>L</sub>= Ω (max<sub>i=1,k</sub>N<sub>i</sub>). Implies that only the O(k) additive term can be removed
+
+__Partitioning Technique__:
+
+When some aggregation functions may potentially receive large inputs (_e.g. large k_) or skewed ones it is advisable to partition the input, either deterministically or randomly, and perform aggregation in stages.
+
+This can be done with:
+
+* An improved version of word count
+* A general category counting primitive
+
+### Improved Word count 2
+
+__Idea__: partition intermediate pairs in o(N) groups and compute counts in two stages
+
+#### Round 1:
+
+__SLIDES__
+
+#### Round 2:
+
+__SLIDES__
+
+## Category Counting
+
+__SLIDES__
+
+## Maximum Pairwise Distance
+
+__SLIDES__
+
+### Exercise
+
+__QUADERNO__
+
+#### Round 1
+
+#### Round 2
+
+#### Round 3
+
+#### Round 4
+
+#### Round 5

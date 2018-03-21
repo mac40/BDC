@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/2.4.1/github-markdown.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css">
+    <link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/texmath.css">
+    <link rel="stylesheet" href="https://gitcdn.xyz/repo/goessner/mdmath/master/css/vscode-texmath.css">
+
+</head>
+
+<body class="markdown-body">
+    <h1 data-line="0" class="code-line" id="windows-pyspark-installation-guide">Windows Pyspark installation Guide</h1>
+    <ol>
+        <li data-line="2" class="code-line">
+            <p data-line="2" class="code-line">Via terminal install pyspark using the following command</p>
+            <pre class="hljs"><code><div>pip install pyspark
+</div></code></pre>
+        </li>
+        <li data-line="6" class="code-line">
+            <p data-line="6" class="code-line">Download and unzip winutils from
+                <a href="https://github.com/srccodes/hadoop-common-2.2.0-bin/archive/master.zip">here</a>
+            </p>
+        </li>
+        <li data-line="8" class="code-line">
+            <p data-line="8" class="code-line">Modify your environment variables in Windows and add to the path the bin containted in the downloaded folder</p>
+        </li>
+        <li data-line="10" class="code-line">
+            <p data-line="10" class="code-line">In your python code you will need to add the following lines of codes</p>
+            <pre class="hljs"><code><div><span class="hljs-keyword">from</span> pyspark <span class="hljs-keyword">import</span> SparkContext
+
+<span class="hljs-keyword">import</span> os
+
+os.environ[<span class="hljs-string">'HADOOP_HOME'</span>] = <span class="hljs-string">"path to the downloaded folder"</span>
+
+sc = SparkContext.getOrCreate()
+</div></code></pre>
+        </li>
+    </ol>
+
+</body>
+
+</html>

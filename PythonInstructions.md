@@ -71,7 +71,7 @@ def f(_):
     else:
         return 0
 
-count = sc.parallelize(range(1,n+1), partitions).map(f).reduce(lambda x, y: x+y)
+count = sc.parallelize(range(1,n+1)).map(f).reduce(lambda x, y: x+y)
 
 print("Pi is roughly {}".format(4.0 * count/n))
 ```

@@ -12,30 +12,30 @@
 </head>
 
 <body class="markdown-body">
-    <h1 data-line="NaN" class="code-line" id="pyspark-installation-guide">Pyspark installation guide</h1>
-    <h2 data-line="NaN" class="code-line" id="osx-installation-guide">OSX installation guide</h2>
-    <h3 data-line="NaN" class="code-line" id="pyspark---environment-setup">PySpark - Environment setup</h3>
+    <h1 data-line="NaN" class="code-line code-line" id="pyspark-installation-guide">Pyspark installation guide</h1>
+    <h2 data-line="NaN" class="code-line code-line" id="osx-installation-guide">OSX installation guide</h2>
+    <h3 data-line="NaN" class="code-line code-line" id="pyspark---environment-setup">PySpark - Environment setup</h3>
     <ul>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">
                 <strong>Step 1</strong>: Make sure that java and scala are installed on your computer (PySpark doesn't work very
                 well with Java 9, so it's better to use Java 8)</p>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">
                 <strong>Step 2</strong>: Download Spark from
                 <a href="https://spark.apache.org/downloads.html">here</a>
             </p>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">
                 <strong>Step 3</strong>: Move the downloaded file in a choosen directory, for example
                 <code>~/Dev</code> and unzip it with
                 <code>tar -xvf Downloads/spark-2.1.0-bin-hadoop2.7.tgz</code>
             </p>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">
                 <strong>Step 4</strong>: Now we need to set the following environments to set the Spark path and the Py4j path in
                 the bash profile</p>
         </li>
@@ -47,51 +47,51 @@ export PATH = $SPARK_HOME/python:$PATH
 
 </div></code></pre>
     <ul>
-        <li data-line="NaN" class="code-line">
+        <li data-line="NaN" class="code-line code-line">
             <strong>Step 5</strong>: restart the terminal application and then test if it works by typing</li>
     </ul>
     <pre class="hljs"><code><div>$SPARK_HOME/bin/pyspark
 </div></code></pre>
     <ul>
-        <li data-line="NaN" class="code-line">
+        <li data-line="NaN" class="code-line code-line">
             <strong>Step 6</strong>: To run a python script, for example
             <code>FirstSparkApp.py</code> type</li>
     </ul>
     <pre class="hljs"><code><div>$SPARK_HOME/bin/spark-submit FirstSparkApp.py
 </div></code></pre>
-    <h2 data-line="NaN" class="code-line" id="windows-installation-guide">Windows installation Guide</h2>
+    <h2 data-line="NaN" class="code-line code-line" id="windows-installation-guide">Windows installation Guide</h2>
     <ol>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">Download and install the JDK from
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">Download and install the JDK from
                 <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a>
             </p>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">Via terminal install pyspark using the following command</p>
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">Via terminal install pyspark using the following command</p>
             <pre class="hljs"><code><div>pip install pyspark
 </div></code></pre>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">Download and unzip winutils from
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">Download and unzip winutils from
                 <a href="https://github.com/srccodes/hadoop-common-2.2.0-bin/archive/master.zip">here</a>
             </p>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">Modify your environment variables in the following way:</p>
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">Modify your environment variables in the following way:</p>
             <ul>
-                <li data-line="NaN" class="code-line">Modify the environment variable &quot;path&quot; and add &quot;path_to_unzip_winutils_folder/bin&quot;</li>
-                <li data-line="NaN" class="code-line">Add to the environment variables a new variable called &quot;HADOOP_HOME&quot; and give it value &quot;path_to_unzip_winutils_folder&quot;</li>
+                <li data-line="NaN" class="code-line code-line">Modify the environment variable &quot;path&quot; and add &quot;path_to_unzip_winutils_folder/bin&quot;</li>
+                <li data-line="NaN" class="code-line code-line">Add to the environment variables a new variable called &quot;HADOOP_HOME&quot; and give it value &quot;path_to_unzip_winutils_folder&quot;</li>
             </ul>
         </li>
-        <li data-line="NaN" class="code-line">
-            <p data-line="NaN" class="code-line">In your python code you will need to add the following lines of codes</p>
+        <li data-line="NaN" class="code-line code-line">
+            <p data-line="NaN" class="code-line code-line">In your python code you will need to add the following lines of codes</p>
             <pre class="hljs"><code><div><span class="hljs-keyword">from</span> pyspark <span class="hljs-keyword">import</span> SparkContext
 
 sc = SparkContext.getOrCreate()
 </div></code></pre>
         </li>
     </ol>
-    <h2 data-line="NaN" class="code-line" id="example">Example</h2>
+    <h2 data-line="NaN" class="code-line code-line" id="example">Example</h2>
     <pre class="hljs"><code><div><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
 <span class="hljs-keyword">from</span> pyspark <span class="hljs-keyword">import</span> SparkContext, SparkConf
 
@@ -107,7 +107,7 @@ n = <span class="hljs-number">10000</span>
     <span class="hljs-keyword">else</span>:
         <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>
 
-count = sc.parallelize(range(<span class="hljs-number">1</span>,n+<span class="hljs-number">1</span>), partitions).map(f).reduce(<span class="hljs-keyword">lambda</span> x, y: x+y)
+count = sc.parallelize(range(<span class="hljs-number">1</span>,n+<span class="hljs-number">1</span>)).map(f).reduce(<span class="hljs-keyword">lambda</span> x, y: x+y)
 
 print(<span class="hljs-string">"Pi is roughly {}"</span>.format(<span class="hljs-number">4.0</span> * count/n))
 </div></code></pre>

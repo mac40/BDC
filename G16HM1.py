@@ -7,7 +7,6 @@ import os, sys
 import re
 
 # Spark initialization lines
-os.environ['HADOOP_HOME'] = "C:/Program Files/Hadoop"
 sparkConf = SparkConf().setAppName("Sum_of_Squares")
 sc = SparkContext.getOrCreate()
 
@@ -24,6 +23,19 @@ try:
 except FileNotFoundError:
     print("File not found")
     sys.exit()
+
+# Another way of reading data is the following one
+# but it use a local list
+
+# Read the numbers from the dataset file and
+# store them in a local list lNumbers
+# lNumbers = []
+# with open(file_path) as file:
+#     for x in file.read().split():
+#         lNumbers.append(float(x))
+
+# create parallel collection (RDD)
+# dNumbers = sc.parallelize(lNumbers)
 
 # divide elements in RDD using common separators
 rdd_flatMapped = rdd.flatMap(lambda line: re.split(",| |\n|, ", line))

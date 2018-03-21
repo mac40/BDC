@@ -42,7 +42,9 @@ $SPARK_HOME/bin/spark-submit FirstSparkApp.py
     ```
 3. Download and unzip winutils from [here](https://github.com/srccodes/hadoop-common-2.2.0-bin/archive/master.zip)
 
-4. Modify your environment variables in Windows and add to the path the bin containted in the downloaded folder
+4. Modify your environment variables in Windows in the following way:
+    * Modify the environment variable "path" and add "path_to_unzip_winutils_folder/bin"
+    * Add to the environment variables a new variable called "HADOOP_HOME" and give it value "path_to_unzip_winutils_folder"
 
 5. In your python code you will need to add the following lines of codes
     ```python

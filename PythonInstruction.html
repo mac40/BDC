@@ -12,33 +12,1091 @@
 </head>
 
 <body class="markdown-body">
-    <h1 data-line="0" class="code-line" id="windows-pyspark-installation-guide">Windows Pyspark installation Guide</h1>
+    <h1 data-line="NaN" class="code-line" id="pyspark-installation-guide">Pyspark installation guide</h1>
+    <h2 data-line="NaN" class="code-line" id="osx-installation-guide">OSX installation guide</h2>
+    <h3 data-line="NaN" class="code-line" id="pyspark---environment-setup">PySpark - Environment setup</h3>
+    <ul>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">
+                <strong>Step 1</strong>: Make sure that java and scala are installed on your computer (PySpark doesn't work very
+                well with Java 9, so it's better to use Java 8)</p>
+        </li>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">
+                <strong>Step 2</strong>: Download Spark from
+                <a href="https://spark.apache.org/downloads.html">here</a>
+            </p>
+        </li>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">
+                <strong>Step 3</strong>: Move the downloaded file in a choosen directory, for example
+                <code>~/Dev</code> and unzip it with
+                <code>tar -xvf Downloads/spark-2.1.0-bin-hadoop2.7.tgz</code>
+            </p>
+        </li>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">
+                <strong>Step 4</strong>: Now we need to set the following environments to set the Spark path and the Py4j path in
+                the bash profile</p>
+        </li>
+    </ul>
+    <pre class="hljs"><code><div>export SPARK_HOME = ~/Dev/hadoop/spark-2.1.0-bin-hadoop2.7
+export PATH = $PATH:~/Dev/hadoop/spark-2.1.0-bin-hadoop2.7/bin
+export PYTHONPATH = $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.4-src.zip:$PYTHONPATH
+export PATH = $SPARK_HOME/python:$PATH
+
+</div></code></pre>
+    <ul>
+        <li data-line="NaN" class="code-line">
+            <strong>Step 5</strong>: restart the terminal application and then test if it works by typing</li>
+    </ul>
+    <pre class="hljs"><code><div>$SPARK_HOME/bin/pyspark
+</div></code></pre>
+    <ul>
+        <li data-line="NaN" class="code-line">
+            <strong>Step 6</strong>: To run a python script, for example
+            <code>FirstSparkApp.py</code> type</li>
+    </ul>
+    <pre class="hljs"><code><div>$SPARK_HOME/bin/spark-submit FirstSparkApp.py
+</div></code></pre>
+    <h2 data-line="NaN" class="code-line" id="windows-installation-guide">Windows installation Guide</h2>
     <ol>
-        <li data-line="2" class="code-line">
-            <p data-line="2" class="code-line">Via terminal install pyspark using the following command</p>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">Download and install the JDK from
+                <a href="http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">here</a>
+            </p>
+        </li>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">Via terminal install pyspark using the following command</p>
             <pre class="hljs"><code><div>pip install pyspark
 </div></code></pre>
         </li>
-        <li data-line="6" class="code-line">
-            <p data-line="6" class="code-line">Download and unzip winutils from
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">Download and unzip winutils from
                 <a href="https://github.com/srccodes/hadoop-common-2.2.0-bin/archive/master.zip">here</a>
             </p>
         </li>
-        <li data-line="8" class="code-line">
-            <p data-line="8" class="code-line">Modify your environment variables in Windows and add to the path the bin containted in the downloaded folder</p>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">Modify your environment variables in the following way:</p>
+            <ul>
+                <li data-line="NaN" class="code-line">Modify the environment variable &quot;path&quot; and add &quot;path_to_unzip_winutils_folder/bin&quot;</li>
+                <li data-line="NaN" class="code-line">Add to the environment variables a new variable called &quot;HADOOP_HOME&quot; and give it value &quot;path_to_unzip_winutils_folder&quot;</li>
+            </ul>
         </li>
-        <li data-line="10" class="code-line">
-            <p data-line="10" class="code-line">In your python code you will need to add the following lines of codes</p>
+        <li data-line="NaN" class="code-line">
+            <p data-line="NaN" class="code-line">In your python code you will need to add the following lines of codes</p>
             <pre class="hljs"><code><div><span class="hljs-keyword">from</span> pyspark <span class="hljs-keyword">import</span> SparkContext
-
-<span class="hljs-keyword">import</span> os
-
-os.environ[<span class="hljs-string">'HADOOP_HOME'</span>] = <span class="hljs-string">"path to the downloaded folder"</span>
 
 sc = SparkContext.getOrCreate()
 </div></code></pre>
         </li>
     </ol>
+    <h2 data-line="NaN" class="code-line" id="jupyter-notebook">Jupyter notebook</h2>
+    <p data-line="NaN" class="code-line">It is possible to use jupyter notebook as a spark shell by writing the following commands in
+        <code>.bash_profile</code>
+    </p>
+    <pre class="hljs"><code><div>export PYSPARK_DRIVER_PYTHON=&quot;jupyter&quot;
+export PYSPARK_DRIVER_PYTHON_OPTS=&quot;notebook&quot;
+
+#Write this line if you are using python 3
+export PYSPARK_PYTHON=python3
+
+#create a Spark-Notebook
+alias snotebook='$SPARK_HOME/bin/pyspark --master local[2]'
+</div></code></pre>
+    <p data-line="NaN" class="code-line">Now, just type in your terminal window</p>
+    <pre class="hljs"><code><div>snotebook
+</div></code></pre>
+    <p data-line="NaN" class="code-line">and run the following code to test if everything works fine.</p>
+    <h3 data-line="NaN" class="code-line" id="estimate-pi">Estimate
+        <eq>
+            <span class="katex">
+                <span class="katex-mathml">
+                    <math>
+                        <semantics>
+                            <mrow>
+                                <mi>π</mi>
+                            </mrow>
+                            <annotation encoding="application/x-tex">\pi</annotation>
+                        </semantics>
+                    </math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                    <span class="strut" style="height:0.43056em;"></span>
+                    <span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span>
+                    <span class="base">
+                        <span class="mord mathit" style="margin-right:0.03588em;">π</span>
+                    </span>
+                </span>
+            </span>
+        </eq>
+    </h3>
+    <p data-line="NaN" class="code-line">We have a circle with radius
+        <eq>
+            <span class="katex">
+                <span class="katex-mathml">
+                    <math>
+                        <semantics>
+                            <mrow>
+                                <mi>r</mi>
+                                <mo>=</mo>
+                                <mn>1</mn>
+                            </mrow>
+                            <annotation encoding="application/x-tex">r=1</annotation>
+                        </semantics>
+                    </math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                    <span class="strut" style="height:0.64444em;"></span>
+                    <span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span>
+                    <span class="base">
+                        <span class="mord mathit" style="margin-right:0.02778em;">r</span>
+                        <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                        <span class="mrel">=</span>
+                        <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                        <span class="mord">1</span>
+                    </span>
+                </span>
+            </span>
+        </eq> inside a square with
+        <eq>
+            <span class="katex">
+                <span class="katex-mathml">
+                    <math>
+                        <semantics>
+                            <mrow>
+                                <mi>l</mi>
+                                <mo>=</mo>
+                                <mn>2</mn>
+                            </mrow>
+                            <annotation encoding="application/x-tex">l = 2</annotation>
+                        </semantics>
+                    </math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                    <span class="strut" style="height:0.69444em;"></span>
+                    <span class="strut bottom" style="height:0.69444em;vertical-align:0em;"></span>
+                    <span class="base">
+                        <span class="mord mathit" style="margin-right:0.01968em;">l</span>
+                        <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                        <span class="mrel">=</span>
+                        <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                        <span class="mord">2</span>
+                    </span>
+                </span>
+            </span>
+        </eq>. The probability for a point to be inside the circle is</p>
+    <section>
+        <eqn>
+            <span class="katex-display">
+                <span class="katex">
+                    <span class="katex-mathml">
+                        <math>
+                            <semantics>
+                                <mrow>
+                                    <mi>P</mi>
+                                    <mo>=</mo>
+                                    <mfrac>
+                                        <mrow>
+                                            <mi>π</mi>
+                                            <msup>
+                                                <mi>r</mi>
+                                                <mn>2</mn>
+                                            </msup>
+                                        </mrow>
+                                        <mrow>
+                                            <msup>
+                                                <mi>l</mi>
+                                                <mn>2</mn>
+                                            </msup>
+                                        </mrow>
+                                    </mfrac>
+                                    <mo>⇒</mo>
+                                    <mi>π</mi>
+                                    <mo>=</mo>
+                                    <mfrac>
+                                        <mrow>
+                                            <mi>P</mi>
+                                            <mo>⋅</mo>
+                                            <msup>
+                                                <mi>l</mi>
+                                                <mn>2</mn>
+                                            </msup>
+                                        </mrow>
+                                        <mrow>
+                                            <msup>
+                                                <mi>r</mi>
+                                                <mn>2</mn>
+                                            </msup>
+                                        </mrow>
+                                    </mfrac>
+                                </mrow>
+                                <annotation encoding="application/x-tex">P = \frac{\pi r^2}{l^2}\Rightarrow \pi = \frac{P\cdot l^2}{r^2}</annotation>
+                            </semantics>
+                        </math>
+                    </span>
+                    <span class="katex-html" aria-hidden="true">
+                        <span class="strut" style="height:1.491108em;"></span>
+                        <span class="strut bottom" style="height:2.177108em;vertical-align:-0.686em;"></span>
+                        <span class="base">
+                            <span class="mord mathit" style="margin-right:0.13889em;">P</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mrel">=</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mord">
+                                <span class="mopen nulldelimiter"></span>
+                                <span class="mfrac">
+                                    <span class="vlist-t vlist-t2">
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:1.491108em;">
+                                                <span style="top:-2.314em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord">
+                                                            <span class="mord mathit" style="margin-right:0.01968em;">l</span>
+                                                            <span class="msupsub">
+                                                                <span class="vlist-t">
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.740108em;">
+                                                                            <span style="top:-2.9890000000000003em;margin-right:0.05em;">
+                                                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                                                <span class="sizing reset-size6 size3 mtight">
+                                                                                    <span class="mord mtight">2</span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.15em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="stretchy" style="height:0.2em;">
+                                                        <svg width='400em' height='0.2em' viewBox='0 0 400000 200' preserveAspectRatio='xMinYMin slice'>
+                                                            <path d='M0 80H400000 v40H0z M0 80H400000 v40H0z' />
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.677em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord mathit" style="margin-right:0.03588em;">π</span>
+                                                        <span class="mord">
+                                                            <span class="mord mathit" style="margin-right:0.02778em;">r</span>
+                                                            <span class="msupsub">
+                                                                <span class="vlist-t">
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.8141079999999999em;">
+                                                                            <span style="top:-3.063em;margin-right:0.05em;">
+                                                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                                                <span class="sizing reset-size6 size3 mtight">
+                                                                                    <span class="mord mtight">2</span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                            <span class="vlist-s">​</span>
+                                        </span>
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:0.686em;"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="mclose nulldelimiter"></span>
+                            </span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mrel">⇒</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mord mathit" style="margin-right:0.03588em;">π</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mrel">=</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mord">
+                                <span class="mopen nulldelimiter"></span>
+                                <span class="mfrac">
+                                    <span class="vlist-t vlist-t2">
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:1.491108em;">
+                                                <span style="top:-2.314em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord">
+                                                            <span class="mord mathit" style="margin-right:0.02778em;">r</span>
+                                                            <span class="msupsub">
+                                                                <span class="vlist-t">
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.740108em;">
+                                                                            <span style="top:-2.9890000000000003em;margin-right:0.05em;">
+                                                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                                                <span class="sizing reset-size6 size3 mtight">
+                                                                                    <span class="mord mtight">2</span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.15em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="stretchy" style="height:0.2em;">
+                                                        <svg width='400em' height='0.2em' viewBox='0 0 400000 200' preserveAspectRatio='xMinYMin slice'>
+                                                            <path d='M0 80H400000 v40H0z M0 80H400000 v40H0z' />
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.677em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord mathit" style="margin-right:0.13889em;">P</span>
+                                                        <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                                                        <span class="mbin">⋅</span>
+                                                        <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                                                        <span class="mord">
+                                                            <span class="mord mathit" style="margin-right:0.01968em;">l</span>
+                                                            <span class="msupsub">
+                                                                <span class="vlist-t">
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.8141079999999999em;">
+                                                                            <span style="top:-3.063em;margin-right:0.05em;">
+                                                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                                                <span class="sizing reset-size6 size3 mtight">
+                                                                                    <span class="mord mtight">2</span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                            <span class="vlist-s">​</span>
+                                        </span>
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:0.686em;"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="mclose nulldelimiter"></span>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+        </eqn>
+    </section>
+    <p data-line="NaN" class="code-line">Now, keeping in mind that</p>
+    <section>
+        <eqn>
+            <span class="katex-display">
+                <span class="katex">
+                    <span class="katex-mathml">
+                        <math>
+                            <semantics>
+                                <mrow>
+                                    <mi>P</mi>
+                                    <mo>=</mo>
+                                    <mfrac>
+                                        <mrow>
+                                            <mi mathvariant="normal">#</mi>
+                                            <mtext>points inside the circle</mtext>
+                                        </mrow>
+                                        <mrow>
+                                            <mi mathvariant="normal">#</mi>
+                                            <mtext>points generated</mtext>
+                                        </mrow>
+                                    </mfrac>
+                                </mrow>
+                                <annotation encoding="application/x-tex">P = \frac{\#\text{points inside the circle}}{\# \text{points generated}}</annotation>
+                            </semantics>
+                        </math>
+                    </span>
+                    <span class="katex-html" aria-hidden="true">
+                        <span class="strut" style="height:1.37144em;"></span>
+                        <span class="strut bottom" style="height:2.25188em;vertical-align:-0.8804400000000001em;"></span>
+                        <span class="base">
+                            <span class="mord mathit" style="margin-right:0.13889em;">P</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mrel">=</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mord">
+                                <span class="mopen nulldelimiter"></span>
+                                <span class="mfrac">
+                                    <span class="vlist-t vlist-t2">
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:1.37144em;">
+                                                <span style="top:-2.314em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord">#</span>
+                                                        <span class="mord text">
+                                                            <span class="mord">points generated</span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.15em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="stretchy" style="height:0.2em;">
+                                                        <svg width='400em' height='0.2em' viewBox='0 0 400000 200' preserveAspectRatio='xMinYMin slice'>
+                                                            <path d='M0 80H400000 v40H0z M0 80H400000 v40H0z' />
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.6770000000000005em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord">#</span>
+                                                        <span class="mord text">
+                                                            <span class="mord">points inside the circle</span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                            <span class="vlist-s">​</span>
+                                        </span>
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:0.8804400000000001em;"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="mclose nulldelimiter"></span>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+        </eqn>
+    </section>
+    <p data-line="NaN" class="code-line">we can estimate
+        <eq>
+            <span class="katex">
+                <span class="katex-mathml">
+                    <math>
+                        <semantics>
+                            <mrow>
+                                <mi>π</mi>
+                            </mrow>
+                            <annotation encoding="application/x-tex">\pi</annotation>
+                        </semantics>
+                    </math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                    <span class="strut" style="height:0.43056em;"></span>
+                    <span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span>
+                    <span class="base">
+                        <span class="mord mathit" style="margin-right:0.03588em;">π</span>
+                    </span>
+                </span>
+            </span>
+        </eq> as</p>
+    <section>
+        <eqn>
+            <span class="katex-display">
+                <span class="katex">
+                    <span class="katex-mathml">
+                        <math>
+                            <semantics>
+                                <mrow>
+                                    <mi>π</mi>
+                                    <mo>=</mo>
+                                    <mfrac>
+                                        <mrow>
+                                            <msub>
+                                                <mi>n</mi>
+                                                <mrow>
+                                                    <mi>i</mi>
+                                                    <mi>n</mi>
+                                                    <mi>s</mi>
+                                                    <mi>i</mi>
+                                                    <mi>d</mi>
+                                                    <mi>e</mi>
+                                                </mrow>
+                                            </msub>
+                                            <mo>⋅</mo>
+                                            <mn>4</mn>
+                                        </mrow>
+                                        <mrow>
+                                            <msub>
+                                                <mi>n</mi>
+                                                <mrow>
+                                                    <mi>t</mi>
+                                                    <mi>o</mi>
+                                                    <mi>t</mi>
+                                                    <mi>a</mi>
+                                                    <mi>l</mi>
+                                                </mrow>
+                                            </msub>
+                                        </mrow>
+                                    </mfrac>
+                                </mrow>
+                                <annotation encoding="application/x-tex">\pi=\frac{n_{inside}\cdot 4}{n_{total}}</annotation>
+                            </semantics>
+                        </math>
+                    </span>
+                    <span class="katex-html" aria-hidden="true">
+                        <span class="strut" style="height:1.32144em;"></span>
+                        <span class="strut bottom" style="height:2.1574400000000002em;vertical-align:-0.8360000000000001em;"></span>
+                        <span class="base">
+                            <span class="mord mathit" style="margin-right:0.03588em;">π</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mrel">=</span>
+                            <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                            <span class="mord">
+                                <span class="mopen nulldelimiter"></span>
+                                <span class="mfrac">
+                                    <span class="vlist-t vlist-t2">
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:1.32144em;">
+                                                <span style="top:-2.3139999999999996em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord">
+                                                            <span class="mord mathit">n</span>
+                                                            <span class="msupsub">
+                                                                <span class="vlist-t vlist-t2">
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.33610799999999996em;">
+                                                                            <span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;">
+                                                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                                                <span class="sizing reset-size6 size3 mtight">
+                                                                                    <span class="mord mtight">
+                                                                                        <span class="mord mathit mtight">t</span>
+                                                                                        <span class="mord mathit mtight">o</span>
+                                                                                        <span class="mord mathit mtight">t</span>
+                                                                                        <span class="mord mathit mtight">a</span>
+                                                                                        <span class="mord mathit mtight"
+                                                                                            style="margin-right:0.01968em;">l</span>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="vlist-s">​</span>
+                                                                    </span>
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.15em;"></span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.15em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="stretchy" style="height:0.2em;">
+                                                        <svg width='400em' height='0.2em' viewBox='0 0 400000 200' preserveAspectRatio='xMinYMin slice'>
+                                                            <path d='M0 80H400000 v40H0z M0 80H400000 v40H0z' />
+                                                        </svg>
+                                                    </span>
+                                                </span>
+                                                <span style="top:-3.677em;">
+                                                    <span class="pstrut" style="height:3em;"></span>
+                                                    <span class="mord">
+                                                        <span class="mord">
+                                                            <span class="mord mathit">n</span>
+                                                            <span class="msupsub">
+                                                                <span class="vlist-t vlist-t2">
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.33610799999999996em;">
+                                                                            <span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;">
+                                                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                                                <span class="sizing reset-size6 size3 mtight">
+                                                                                    <span class="mord mtight">
+                                                                                        <span class="mord mathit mtight">i</span>
+                                                                                        <span class="mord mathit mtight">n</span>
+                                                                                        <span class="mord mathit mtight">s</span>
+                                                                                        <span class="mord mathit mtight">i</span>
+                                                                                        <span class="mord mathit mtight">d</span>
+                                                                                        <span class="mord mathit mtight">e</span>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="vlist-s">​</span>
+                                                                    </span>
+                                                                    <span class="vlist-r">
+                                                                        <span class="vlist" style="height:0.15em;"></span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                        <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                                                        <span class="mbin">⋅</span>
+                                                        <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                                                        <span class="mord">4</span>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                            <span class="vlist-s">​</span>
+                                        </span>
+                                        <span class="vlist-r">
+                                            <span class="vlist" style="height:0.8360000000000001em;"></span>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="mclose nulldelimiter"></span>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+        </eqn>
+    </section>
+    <h4 data-line="NaN" class="code-line" id="confidence-interval">Confidence interval</h4>
+    <p data-line="NaN" class="code-line">For a high
+        <eq>
+            <span class="katex">
+                <span class="katex-mathml">
+                    <math>
+                        <semantics>
+                            <mrow>
+                                <mi>n</mi>
+                            </mrow>
+                            <annotation encoding="application/x-tex">n</annotation>
+                        </semantics>
+                    </math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                    <span class="strut" style="height:0.43056em;"></span>
+                    <span class="strut bottom" style="height:0.43056em;vertical-align:0em;"></span>
+                    <span class="base">
+                        <span class="mord mathit">n</span>
+                    </span>
+                </span>
+            </span>
+        </eq>, a CI for the estimate of
+        <eq>
+            <span class="katex">
+                <span class="katex-mathml">
+                    <math>
+                        <semantics>
+                            <mrow>
+                                <mover accent="true">
+                                    <mrow>
+                                        <mi>p</mi>
+                                    </mrow>
+                                    <mo>^</mo>
+                                </mover>
+                                <mo>=</mo>
+                                <msub>
+                                    <mi>n</mi>
+                                    <mrow>
+                                        <mi>i</mi>
+                                        <mi>n</mi>
+                                    </mrow>
+                                </msub>
+                                <mi mathvariant="normal">/</mi>
+                                <msub>
+                                    <mi>n</mi>
+                                    <mrow>
+                                        <mi>t</mi>
+                                        <mi>o</mi>
+                                        <mi>t</mi>
+                                    </mrow>
+                                </msub>
+                            </mrow>
+                            <annotation encoding="application/x-tex">\hat{p} = n_{in}/n_{tot}</annotation>
+                        </semantics>
+                    </math>
+                </span>
+                <span class="katex-html" aria-hidden="true">
+                    <span class="strut" style="height:0.75em;"></span>
+                    <span class="strut bottom" style="height:1em;vertical-align:-0.25em;"></span>
+                    <span class="base">
+                        <span class="mord accent">
+                            <span class="vlist-t vlist-t2">
+                                <span class="vlist-r">
+                                    <span class="vlist" style="height:0.69444em;">
+                                        <span style="top:-3em;">
+                                            <span class="pstrut" style="height:3em;"></span>
+                                            <span class="mord">
+                                                <span class="mord mathit">p</span>
+                                            </span>
+                                        </span>
+                                        <span style="top:-3em;">
+                                            <span class="pstrut" style="height:3em;"></span>
+                                            <span class="accent-body" style="left:-0.16666em;">^</span>
+                                        </span>
+                                    </span>
+                                    <span class="vlist-s">​</span>
+                                </span>
+                                <span class="vlist-r">
+                                    <span class="vlist" style="height:0.19444em;"></span>
+                                </span>
+                            </span>
+                        </span>
+                        <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                        <span class="mrel">=</span>
+                        <span class="mord rule" style="margin-right:0.2777777777777778em;"></span>
+                        <span class="mord">
+                            <span class="mord mathit">n</span>
+                            <span class="msupsub">
+                                <span class="vlist-t vlist-t2">
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:0.31166399999999994em;">
+                                            <span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;">
+                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                <span class="sizing reset-size6 size3 mtight">
+                                                    <span class="mord mtight">
+                                                        <span class="mord mathit mtight">i</span>
+                                                        <span class="mord mathit mtight">n</span>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="vlist-s">​</span>
+                                    </span>
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:0.15em;"></span>
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                        <span class="mord">/</span>
+                        <span class="mord">
+                            <span class="mord mathit">n</span>
+                            <span class="msupsub">
+                                <span class="vlist-t vlist-t2">
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:0.2805559999999999em;">
+                                            <span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;">
+                                                <span class="pstrut" style="height:2.7em;"></span>
+                                                <span class="sizing reset-size6 size3 mtight">
+                                                    <span class="mord mtight">
+                                                        <span class="mord mathit mtight">t</span>
+                                                        <span class="mord mathit mtight">o</span>
+                                                        <span class="mord mathit mtight">t</span>
+                                                    </span>
+                                                </span>
+                                            </span>
+                                        </span>
+                                        <span class="vlist-s">​</span>
+                                    </span>
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:0.15em;"></span>
+                                    </span>
+                                </span>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+        </eq> is</p>
+    <section>
+        <eqn>
+            <span class="katex-display">
+                <span class="katex">
+                    <span class="katex-mathml">
+                        <math>
+                            <semantics>
+                                <mrow>
+                                    <mover accent="true">
+                                        <mrow>
+                                            <mi>p</mi>
+                                        </mrow>
+                                        <mo>^</mo>
+                                    </mover>
+                                    <mo>±</mo>
+                                    <mn>1</mn>
+                                    <mi mathvariant="normal">.</mi>
+                                    <mn>9</mn>
+                                    <mn>6</mn>
+                                    <msqrt>
+                                        <mrow>
+                                            <mfrac>
+                                                <mrow>
+                                                    <mover accent="true">
+                                                        <mrow>
+                                                            <mi>p</mi>
+                                                        </mrow>
+                                                        <mo>^</mo>
+                                                    </mover>
+                                                    <mo>(</mo>
+                                                    <mn>1</mn>
+                                                    <mo>−</mo>
+                                                    <mover accent="true">
+                                                        <mrow>
+                                                            <mi>p</mi>
+                                                        </mrow>
+                                                        <mo>^</mo>
+                                                    </mover>
+                                                    <mo>)</mo>
+                                                </mrow>
+                                                <mrow>
+                                                    <msub>
+                                                        <mi>n</mi>
+                                                        <mrow>
+                                                            <mi>t</mi>
+                                                            <mi>o</mi>
+                                                            <mi>t</mi>
+                                                        </mrow>
+                                                    </msub>
+                                                </mrow>
+                                            </mfrac>
+                                        </mrow>
+                                    </msqrt>
+                                </mrow>
+                                <annotation encoding="application/x-tex">\hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1-\hat{p})}{n_{tot}}}</annotation>
+                            </semantics>
+                        </math>
+                    </span>
+                    <span class="katex-html" aria-hidden="true">
+                        <span class="strut" style="height:1.9293749999999996em;"></span>
+                        <span class="strut bottom" style="height:3.04em;vertical-align:-1.1106250000000004em;"></span>
+                        <span class="base">
+                            <span class="mord accent">
+                                <span class="vlist-t vlist-t2">
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:0.69444em;">
+                                            <span style="top:-3em;">
+                                                <span class="pstrut" style="height:3em;"></span>
+                                                <span class="mord">
+                                                    <span class="mord mathit">p</span>
+                                                </span>
+                                            </span>
+                                            <span style="top:-3em;">
+                                                <span class="pstrut" style="height:3em;"></span>
+                                                <span class="accent-body" style="left:-0.16666em;">^</span>
+                                            </span>
+                                        </span>
+                                        <span class="vlist-s">​</span>
+                                    </span>
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:0.19444em;"></span>
+                                    </span>
+                                </span>
+                            </span>
+                            <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                            <span class="mbin">±</span>
+                            <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                            <span class="mord">1</span>
+                            <span class="mord">.</span>
+                            <span class="mord">9</span>
+                            <span class="mord">6</span>
+                            <span class="mord sqrt">
+                                <span class="vlist-t vlist-t2">
+                                    <span class="vlist-r">
+                                        <span class="vlist" style="height:1.9293749999999996em;">
+                                            <span class="svg-align" style="top:-5em;">
+                                                <span class="pstrut" style="height:5em;"></span>
+                                                <span class="mord" style="padding-left:1em;">
+                                                    <span class="mord">
+                                                        <span class="mopen nulldelimiter"></span>
+                                                        <span class="mfrac">
+                                                            <span class="vlist-t vlist-t2">
+                                                                <span class="vlist-r">
+                                                                    <span class="vlist" style="height:1.427em;">
+                                                                        <span style="top:-2.3139999999999996em;">
+                                                                            <span class="pstrut" style="height:3em;"></span>
+                                                                            <span class="mord">
+                                                                                <span class="mord">
+                                                                                    <span class="mord mathit">n</span>
+                                                                                    <span class="msupsub">
+                                                                                        <span class="vlist-t vlist-t2">
+                                                                                            <span class="vlist-r">
+                                                                                                <span class="vlist" style="height:0.2805559999999999em;">
+                                                                                                    <span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;">
+                                                                                                        <span class="pstrut"
+                                                                                                            style="height:2.7em;"></span>
+                                                                                                        <span class="sizing reset-size6 size3 mtight">
+                                                                                                            <span class="mord mtight">
+                                                                                                                <span class="mord mathit mtight">t</span>
+                                                                                                                <span
+                                                                                                                    class="mord mathit mtight">o</span>
+                                                                                                            <span
+                                                                                                                class="mord mathit mtight">t</span>
+                                                                                                    </span>
+                                                                                                </span>
+                                                                                            </span>
+                                                                                        </span>
+                                                                                        <span class="vlist-s">​</span>
+                                                                                    </span>
+                                                                                    <span class="vlist-r">
+                                                                                        <span class="vlist" style="height:0.15em;"></span>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                    </span>
+                                                                </span>
+                                                                <span style="top:-3.15em;">
+                                                                    <span class="pstrut" style="height:3em;"></span>
+                                                                    <span class="stretchy" style="height:0.2em;">
+                                                                        <svg width='400em' height='0.2em' viewBox='0 0 400000 200'
+                                                                            preserveAspectRatio='xMinYMin slice'>
+                                                                            <path d='M0 80H400000 v40H0z M0 80H400000 v40H0z'
+                                                                            />
+                                                                        </svg>
+                                                                    </span>
+                                                                </span>
+                                                                <span style="top:-3.677em;">
+                                                                    <span class="pstrut" style="height:3em;"></span>
+                                                                    <span class="mord">
+                                                                        <span class="mord accent">
+                                                                            <span class="vlist-t vlist-t2">
+                                                                                <span class="vlist-r">
+                                                                                    <span class="vlist" style="height:0.69444em;">
+                                                                                        <span style="top:-3em;">
+                                                                                            <span class="pstrut" style="height:3em;"></span>
+                                                                                            <span class="mord">
+                                                                                                <span class="mord mathit">p</span>
+                                                                                            </span>
+                                                                                        </span>
+                                                                                        <span style="top:-3em;">
+                                                                                            <span class="pstrut" style="height:3em;"></span>
+                                                                                            <span class="accent-body"
+                                                                                                style="left:-0.16666em;">^</span>
+                                                                                        </span>
+                                                                                    </span>
+                                                                                    <span class="vlist-s">​</span>
+                                                                                </span>
+                                                                                <span class="vlist-r">
+                                                                                    <span class="vlist" style="height:0.19444em;"></span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="mopen">(</span>
+                                                                        <span class="mord">1</span>
+                                                                        <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                                                                        <span class="mbin">−</span>
+                                                                        <span class="mord rule" style="margin-right:0.2222222222222222em;"></span>
+                                                                        <span class="mord accent">
+                                                                            <span class="vlist-t vlist-t2">
+                                                                                <span class="vlist-r">
+                                                                                    <span class="vlist" style="height:0.69444em;">
+                                                                                        <span style="top:-3em;">
+                                                                                            <span class="pstrut" style="height:3em;"></span>
+                                                                                            <span class="mord">
+                                                                                                <span class="mord mathit">p</span>
+                                                                                            </span>
+                                                                                        </span>
+                                                                                        <span style="top:-3em;">
+                                                                                            <span class="pstrut" style="height:3em;"></span>
+                                                                                            <span class="accent-body"
+                                                                                                style="left:-0.16666em;">^</span>
+                                                                                        </span>
+                                                                                    </span>
+                                                                                    <span class="vlist-s">​</span>
+                                                                                </span>
+                                                                                <span class="vlist-r">
+                                                                                    <span class="vlist" style="height:0.19444em;"></span>
+                                                                                </span>
+                                                                            </span>
+                                                                        </span>
+                                                                        <span class="mclose">)</span>
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                            <span class="vlist-s">​</span>
+                                                        </span>
+                                                        <span class="vlist-r">
+                                                            <span class="vlist" style="height:0.8360000000000001em;"></span>
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                                <span class="mclose nulldelimiter"></span>
+                                            </span>
+                                        </span>
+                                    </span>
+                                    <span style="top:-3.8893749999999994em;">
+                                        <span class="pstrut" style="height:5em;"></span>
+                                        <span class="hide-tail" style="min-width:1.02em;height:3.08em;">
+                                            <svg width='400em' height='3.08em' viewBox='0 0 400000 3240' preserveAspectRatio='xMinYMin slice'>
+                                                <path d='M473,2793c339.3,-1799.3,509.3,-2700,510,-2702
+c3.3,-7.3,9.3,-11,18,-11H400000v40H1017.7s-90.5,478,-276.2,1466c-185.7,988,
+-279.5,1483,-281.5,1485c-2,6,-10,9,-24,9c-8,0,-12,-0.7,-12,-2c0,-1.3,-5.3,-32,
+-16,-92c-50.7,-293.3,-119.7,-693.3,-207,-1200c0,-1.3,-5.3,8.7,-16,30c-10.7,
+21.3,-21.3,42.7,-32,64s-16,33,-16,33s-26,-26,-26,-26s76,-153,76,-153s77,-151,
+77,-151c0.7,0.7,35.7,202,105,604c67.3,400.7,102,602.7,104,606z
+M1001 80H400000v40H1017z' />
+                                            </svg>
+                                        </span>
+                                    </span>
+                                </span>
+                                <span class="vlist-s">​</span>
+                            </span>
+                            <span class="vlist-r">
+                                <span class="vlist" style="height:1.1106250000000004em;"></span>
+                            </span>
+                        </span>
+                    </span>
+                </span>
+            </span>
+            </span>
+            </span>
+        </eqn>
+    </section>
+    <pre class="hljs"><code><div><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+<span class="hljs-keyword">from</span> operator <span class="hljs-keyword">import</span> itemgetter
+<span class="hljs-keyword">from</span> matplotlib <span class="hljs-keyword">import</span> pyplot <span class="hljs-keyword">as</span> plt
+%matplotlib inline
+</div></code></pre>
+    <pre class="hljs"><code><div>TOTAL = <span class="hljs-number">10000</span>
+<span class="hljs-comment">#Generate points x in [-1,1] and y in [-1,1]</span>
+dots = sc.parallelize([<span class="hljs-number">2.0</span> * np.random.random(<span class="hljs-number">2</span>) - <span class="hljs-number">1.0</span> <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> range(TOTAL)]).cache()
+print(<span class="hljs-string">"Number of random points:"</span>, dots.count())
+
+stats = dots.stats()
+print(<span class="hljs-string">'Mean:'</span>, stats.mean())
+print(<span class="hljs-string">'stdev:'</span>, stats.stdev())
+
+</div></code></pre>
+    <pre class="hljs"><code><div>OUTPUT:
+    Number of random points: <span class="hljs-number">1000000</span>
+
+    Mean: [ <span class="hljs-number">-1.03904691e-03</span>  <span class="hljs-number">-9.32024986e-05</span>]
+
+    stdev: [ <span class="hljs-number">0.57750796</span>  <span class="hljs-number">0.57762316</span>]
+</div></code></pre>
+    <pre class="hljs"><code><div>plt.figure(figsize = (<span class="hljs-number">10</span>, <span class="hljs-number">5</span>))
+
+<span class="hljs-comment"># Plot 1</span>
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>)
+plt.xlim((<span class="hljs-number">-1.0</span>, <span class="hljs-number">1.0</span>))
+plt.ylim((<span class="hljs-number">-1.0</span>, <span class="hljs-number">1.0</span>))
+
+sample = dots.sample(<span class="hljs-keyword">False</span>, <span class="hljs-number">0.01</span>)
+X = sample.map(itemgetter(<span class="hljs-number">0</span>)).collect()
+Y = sample.map(itemgetter(<span class="hljs-number">1</span>)).collect()
+plt.scatter(X, Y)
+
+<span class="hljs-comment"># Plot 2</span>
+plt.subplot(<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">2</span>)
+plt.xlim((<span class="hljs-number">-1.0</span>, <span class="hljs-number">1.0</span>))
+plt.ylim((<span class="hljs-number">-1.0</span>, <span class="hljs-number">1.0</span>))
+
+inCircle = <span class="hljs-keyword">lambda</span> v: np.linalg.norm(v) &lt;= <span class="hljs-number">1.0</span>
+dotsIn = sample.filter(inCircle).cache()
+dotsOut = sample.filter(<span class="hljs-keyword">lambda</span> v: <span class="hljs-keyword">not</span> inCircle(v)).cache()
+
+<span class="hljs-comment"># inside circle</span>
+Xin = dotsIn.map(itemgetter(<span class="hljs-number">0</span>)).collect()
+Yin = dotsIn.map(itemgetter(<span class="hljs-number">1</span>)).collect()
+plt.scatter(Xin, Yin, color = <span class="hljs-string">'r'</span>)
+
+<span class="hljs-comment"># outside circle</span>
+Xout = dotsOut.map(itemgetter(<span class="hljs-number">0</span>)).collect()
+Yout = dotsOut.map(itemgetter(<span class="hljs-number">1</span>)).collect()
+plt.scatter(Xout, Yout)
+</div></code></pre>
+    <pre class="hljs"><code><div>pIn = dots.filter(inCircle).count()
+</div></code></pre>
+    <pre class="hljs"><code><div>print(<span class="hljs-string">"Estimate of pi = {} +- {}"</span>.format(round(pIn/TOTAL*<span class="hljs-number">4</span>, <span class="hljs-number">4</span>), round(<span class="hljs-number">4</span>*<span class="hljs-number">1.96</span>*np.sqrt((pIn/TOTAL*(<span class="hljs-number">1</span>-pIn/TOTAL))/TOTAL), <span class="hljs-number">4</span>)) )
+</div></code></pre>
+    <pre class="hljs"><code><div>OUTPUT:
+    Estimate of pi = <span class="hljs-number">3.14</span> +- <span class="hljs-number">0.0032</span>
+</div></code></pre>
 
 </body>
 

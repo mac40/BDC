@@ -53,119 +53,25 @@ $SPARK_HOME/bin/spark-submit FirstSparkApp.py
     sc = SparkContext.getOrCreate()
     ```
 
-## Jupyter notebook
-
-It is possible to use jupyter notebook as a spark shell by writing the following commands in `.bash_profile`
-
-```none
-export PYSPARK_DRIVER_PYTHON="jupyter"
-export PYSPARK_DRIVER_PYTHON_OPTS="notebook"
-
-#Write this line if you are using python 3
-export PYSPARK_PYTHON=python3
-
-#create a Spark-Notebook
-alias snotebook='$SPARK_HOME/bin/pyspark --master local[2]'
-```
-
-Now, just type in your terminal window
-
-```none
-snotebook
-```
-
-and run the following code to test if everything works fine.
-
-### Estimate $\pi$
-
-We have a circle with radius $r=1$ inside a square with $l = 2$. The probability for a point to be inside the circle is
-
-$$P = \frac{\pi r^2}{l^2}\Rightarrow \pi = \frac{P\cdot l^2}{r^2}$$
-
-Now, keeping in mind that
-
-$$P = \frac{\#\text{points inside the circle}}{\# \text{points generated}}$$
-
-we can estimate $\pi$ as
-
-$$\pi=\frac{n_{inside}\cdot 4}{n_{total}}$$
-
-#### Confidence interval
-
-For a high $n$, a CI for the estimate of $\hat{p} = n_{in}/n_{tot}$ is
-
-$$\hat{p} \pm 1.96 \sqrt{\frac{\hat{p}(1-\hat{p})}{n_{tot}}}$$
+## Example
 
 ```python
 import numpy as np
-from operator import itemgetter
-from matplotlib import pyplot as plt
-%matplotlib inline
-```
+from pyspark import SparkContext, SparkConf
 
-```python
-TOTAL = 10000
-#Generate points x in [-1,1] and y in [-1,1]
-dots = sc.parallelize([2.0 * np.random.random(2) - 1.0 for i in range(TOTAL)]).cache()
-print("Number of random points:", dots.count())
+conf = SparkConf().setAppName("PiEstimate")
+sc = SparkContext(conf = conf)
 
-stats = dots.stats()
-print('Mean:', stats.mean())
-print('stdev:', stats.stdev())
+n = 10000
 
-```
+def f(_):
+    x, y = np.random.random(2)*2-1
+    if x**2+y**2 <= 1:
+        return 1
+    else:
+        return 0
 
-```python
-OUTPUT:
-    Number of random points: 1000000
+count = sc.parallelize(range(1,n+1), partitions).map(f).reduce(lambda x, y: x+y)
 
-    Mean: [ -1.03904691e-03  -9.32024986e-05]
-
-    stdev: [ 0.57750796  0.57762316]
-```
-
-```python
-plt.figure(figsize = (10, 5))
-
-# Plot 1
-plt.subplot(1, 2, 1)
-plt.xlim((-1.0, 1.0))
-plt.ylim((-1.0, 1.0))
-
-sample = dots.sample(False, 0.01)
-X = sample.map(itemgetter(0)).collect()
-Y = sample.map(itemgetter(1)).collect()
-plt.scatter(X, Y)
-
-# Plot 2
-plt.subplot(1, 2, 2)
-plt.xlim((-1.0, 1.0))
-plt.ylim((-1.0, 1.0))
-
-inCircle = lambda v: np.linalg.norm(v) <= 1.0
-dotsIn = sample.filter(inCircle).cache()
-dotsOut = sample.filter(lambda v: not inCircle(v)).cache()
-
-# inside circle
-Xin = dotsIn.map(itemgetter(0)).collect()
-Yin = dotsIn.map(itemgetter(1)).collect()
-plt.scatter(Xin, Yin, color = 'r')
-
-# outside circle
-Xout = dotsOut.map(itemgetter(0)).collect()
-Yout = dotsOut.map(itemgetter(1)).collect()
-plt.scatter(Xout, Yout)
-```
-
-```python
-pIn = dots.filter(inCircle).count()
-```
-
-```python
-print("Estimate of pi = {} +- {}".format(round(pIn/TOTAL*4, 4), round(4*1.96*np.sqrt((pIn/TOTAL*(1-pIn/TOTAL))/TOTAL), 4)) )
-```
-
-```python
-OUTPUT:
-    Estimate of pi = 3.14 +- 0.0032
+print("Pi is roughly {}".format(4.0 * count/n))
 ```

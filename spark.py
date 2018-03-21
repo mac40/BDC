@@ -1,3 +1,7 @@
+# from __future__ import print_function
+# print RDD like:
+# rdd.foreach(print)
+
 from pyspark import SparkContext
 from pyspark import RDD
 

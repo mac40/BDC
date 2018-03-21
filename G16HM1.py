@@ -3,7 +3,7 @@ Import dataset from txt file into an RDD structure, then use map reduce to calcu
 '''
 
 from pyspark import SparkContext, SparkConf
-import os, sys
+import sys
 import re
 
 # Spark initialization lines
@@ -39,8 +39,8 @@ except FileNotFoundError:
 
 # divide elements in RDD using common separators
 rdd_flatMapped = rdd.flatMap(lambda line: re.split(",| |\n|, ", line))
-# filter eventual non-double elements in RDD
-rdd_filtered = rdd_flatMapped.filter(lambda s: re.match(r'^\d+?\.\d+?$', s))
+# filter eventual non-double/int elements in RDD
+rdd_filtered = rdd_flatMapped.filter(lambda s: re.match(r'\d+\.?\d*', s))
 # map phase: map every element with his square
 rdd_map = rdd_filtered.map(lambda s: float(s)**2)
 # reduce phase: sum all the elements

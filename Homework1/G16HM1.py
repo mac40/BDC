@@ -2,9 +2,10 @@
 Import dataset from txt file into an RDD structure, then use map reduce to calculate the sum of squares
 '''
 
-from pyspark import SparkContext, SparkConf
-import sys
 import re
+import sys
+
+from pyspark import SparkConf, SparkContext
 
 # Spark initialization lines
 sparkConf = SparkConf().setAppName("Sum_of_Squares")

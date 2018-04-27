@@ -2,3 +2,5 @@
 .vscode
 dataset*
 text-sample.txt
+*.txt
+*.zip

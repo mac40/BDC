@@ -108,7 +108,7 @@ Observe that the above definition requires the center to belong to the clusters,
 * K-center and k-median belong to the family of __facility-location-problems__. In these problems, a set F of candidate facilities and a set C of clients are given and the objective is to find a subset of at most _k_ candidate facilities to open, and an assignment of clients to them, so to minimize the maximum of average distance between a client and its assigned facilities. In our formulation, each input point represents both a facility and a client. Numerous variants of these problems have been studied in the literature.
 * K-means objective is also referred to as __Sum of Squared Errors (SSE)__
 
-### [Partitioning primitive](#Partitioning-primitive)
+### Partitioning primitive
 
 Let P be a pointset and S subset of P a set of _k_ selected centers. For all previously defined clustering problems, the best _k_-clustering around these centers is the one where each ci belongs to a distinct cluster and each other point is assigned to the cluster of the closest ci (ties broken arbitrarily)
 
@@ -154,7 +154,7 @@ Let P be a set of N points (N large) from a metric space (M, d), and let _k_ > 1
 
 1. Partition P arbitrarily in _l_ subsets of equal size and execute the Farthest-First Traversal algorithm on each subset separately to identify a set T_i of _k_ centers.
 2. Gather the coreset T = union of all T_i and run using a single reducer, the Farthest-First Traversal algorithm on T to identify S = {c1,..., c _k_} of _k_ centers
-3. [Execute Partition(P, S)](#Partitioning-primitive)
+3. Execute Partition(P, S)
 
 #### Observation
 

@@ -108,7 +108,7 @@ Observe that the above definition requires the center to belong to the clusters,
 * K-center and k-median belong to the family of __facility-location-problems__. In these problems, a set F of candidate facilities and a set C of clients are given and the objective is to find a subset of at most _k_ candidate facilities to open, and an assignment of clients to them, so to minimize the maximum of average distance between a client and its assigned facilities. In our formulation, each input point represents both a facility and a client. Numerous variants of these problems have been studied in the literature.
 * K-means objective is also referred to as __Sum of Squared Errors (SSE)__
 
-### Partitioning primitive
+### [Partitioning primitive](#Partitioning-primitive)
 
 Let P be a pointset and S subset of P a set of _k_ selected centers. For all previously defined clustering problems, the best _k_-clustering around these centers is the one where each ci belongs to a distinct cluster and each other point is assigned to the cluster of the closest ci (ties broken arbitrarily)
 

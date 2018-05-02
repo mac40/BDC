@@ -1,101 +1,181 @@
-'''
-- Run 3 versions of MapReduce word count and returns their individual running times, carefully measured
-- Ask the user to input an integer k and returns the k most frequent words, with ties broken arbitrarily
-'''
-
-import math
-import random
 import sys
+import os.path
 import time
+from pyspark import SparkContext, SparkConf
 
-from pyspark import SparkConf, SparkContext
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
-sparkConf = SparkConf().setAppName("Word Count").setMaster("local[4]")
-sc = SparkContext(conf = sparkConf)
+def main():
+    # Get file path from command line arguments, print error message if no path is given
+    # or the input file doesn't exist
+    try:
+        file_path = str(sys.argv[1])
+        if not os.path.isfile(file_path):
+            sys.exit()
+    except:
+        print("Invalid Input")
+        print("Check if path and file name are correct")
+        sys.exit()
 
-# Import file
-try:
-    file_path = str(sys.argv[1])
-except IndexError:
-    print("IndexError: The dataset file was not specified")
-    sys.exit()
+    ## Create a spark context sc
+    sparkConf = SparkConf(True).setAppName("Word_Count").setMaster("local[*]")
+    sc = SparkContext.getOrCreate(sparkConf)
 
-dataset = sc.textFile(file_path)
+    ## Save the text file into a rdd
+    dDocuments = sc.textFile(file_path).cache()
 
-try:
-    dataset.isEmpty() == False
-except:
-    print("Empty Dataset: The provided dataset is either non existing or empty")
-    sys.exit()
+    ## Count the number of documents present in the text file
+    ## This force the loading of the file, necessary to measure time properly
+    global nDocuments ## This is a global variable we will use in version 2 of Word Count
+    nDocuments = dDocuments.count()
+    print("\nThere are ", nDocuments, " documents in the text file")
 
-# Definition of faltMap's function for Improved Word Count 1
-def flatMap_func(s):
-    sol = []
-    for word in s:
-        if word not in sol:
-            sol.append(word)
-    for word in sol:
-        sol[sol.index(word)] = (word,s.count(word))
-    return sol
+    ################
+    ## Word Count ##
+    ################
 
-# Definition of Improved Word Count 1
-def IWC1(dataset):
-    mapped_dataset = dataset.map(lambda s: s.split(" "))
-    flatmapped_dataset = mapped_dataset.flatMap(lambda s: flatMap_func(s))
-    reduced_dataset = flatmapped_dataset.reduceByKey(lambda a,b: a+b)
-    return reduced_dataset
+    ## First version, compute the word count for each document
+    wc1 = word_count_1(dDocuments)
+    print("\nTime required by Word Count v1: {:8.5f} s".format(wc1[0]))
 
-# Definition of FlatMapOne's function for Improved Word Count 2 
-def flatMapOne_func(s):
-    sol = []
-    for word in s:
-        if word not in sol:
-            sol.append(word)
-    for word in sol:
-        sol[sol.index(word)] = (random.uniform(0,math.sqrt(len(s))),(word,s.count(word)))
-        # sol[sol.index(word)] = (random.randrange(2),(word,s.count(word)))
-    return sol
+    ## Second version, compute the word count in two rounds
+    wc2 = word_count_2(dDocuments)
+    print("\nTime required by Word Count v2: {:8.5f} s".format(wc2[0]))
 
-# Definition of Improved Word Count 2
-def IWC2(dataset):
-    map_one = dataset.map(lambda s: s.split(" "))
-    flatmap_one = map_one.flatMap(lambda s: flatMapOne_func(s))
-    for x in flatmap_one.collect():
-        print(x)
-    # reduced_one = flatmap_one.groupByKey()
-    return dataset
+    ## This version of word count use the method reduceByKey()
+    ## wc3 is a tuple (time, word_count)
+    ## we will use this to get the k most frequent words
+    wc3 = word_count_3(dDocuments)
+    print("\nTime required by Word Count v3: {:8.5f} s".format(wc3[0]))
 
-# Definition of Word count w/ reduce by key
-def WCRBK(dataset):
-    flatmapped_dataset = dataset.flatMap(lambda s: s.split(" "))
-    mapped_dataset = flatmapped_dataset.map(lambda s: (s,1))
-    reduced_dataset = mapped_dataset.reduceByKey(lambda a,b:a+b)
-    return reduced_dataset
+    ##################################
+    ## Return k most frequent words ##
+    ##################################
+    k = input("\nInsert the number of most frequent words to be returned: ")
+    while not k.isnumeric():
+        k = input("Please, insert a valid input (an integer number): ")
+    print("The",  k, "most frequent words are: ")
+    top_k(wc3[1],int(k))
 
-# Main
-start_IWC1 = time.time()
-Improved_Word_Count_1 = IWC1(dataset)
-_ = Improved_Word_Count_1.count()
-end_IWC1 = time.time()
-IWC1_time = end_IWC1 - start_IWC1
-print(IWC1_time)
+    ## Run the three word count methods a few times to compare their performances
+    ## the resulting plot is stored in Benchmark.pdf
+    ## Here, just for comparison, we consider also a word count made without spark
+    bench = input("\nEnter y/n to run a benchmark/exit: ")
+    if bench == "y":
+        benchmark(dDocuments, file_path)
 
-start_IWC2 = time.time()
-Improved_Word_Count_2 = IWC2(dataset)
-_ = Improved_Word_Count_2.count()
-end_IWC2 = time.time()
-IWC2_time = end_IWC2 - start_IWC2
-print(IWC2_time)
+    print("\nCreated a file \'Benchmark.pdf\' in the current directory" )
+    end = input("\nPress enter to exit...\n")
 
-start_WCRBK = time.time()
-Word_Count_RBK = WCRBK(dataset)
-_ = Word_Count_RBK.count()
-end_WCRBK = time.time()
-WCRBK_time = end_WCRBK - start_WCRBK
-print(WCRBK_time)
+###########
+###########
 
-# Return top k elements
-k = input("Select number of elements to show:")
-top_el = Word_Count_RBK.takeOrdered(k, key = lambda s: -s[1])
-for x in top_el:
-    print(x)
+################
+## Word count 1
+def word_count_1(dDoc):
+
+    wordCount = dDoc.flatMap(lambda doc: document_count(doc))\
+                .groupByKey()\
+                .map(lambda it: (it[0],sum([c for c in it[1]])))\
+
+    start = time.time()
+    _ = wordCount.count()
+    stop = time.time()
+    ## Return a tuple (time, wordCount)
+    return  (stop-start, wordCount)
+
+def document_count(document):
+    words = {}
+    for w in document.strip().split():
+        words[w] = words.setdefault(w, 0)+1
+    return list(words.items()) #Return a list of tuples (w, c_i(w))
+
+################
+## Word count 2
+nDocuments = 0 ## Define it as a global variable, we will need it on the map function of round 1
+
+def word_count_2(dDoc):
+
+    ## Round 1 map phase: produce touple (x, (w, c_i(w)))
+    ##         reduce   : Produce (w, c(x,w))
+
+    ## Round 2 map phase: Identity
+    ##         reduce   : gather (w, c(x,w)) and produce (w, c(w))
+    wordCount = dDoc.flatMap(lambda doc: wc2_r1_map(doc))\
+                    .groupByKey()\
+                    .flatMap(lambda it: wc2_r1_reduce(it))\
+                    .groupByKey()\
+                    .map(lambda it: (it[0],sum([c for c in it[1]]))).cache()
+    start = time.time()
+    _ = wordCount.count()
+    stop = time.time()
+    ## Return a tuple (time, wordCount)
+    return  (stop-start, wordCount)
+
+def wc2_r1_map(doc): ## WC2 map function for round 1
+    words = {}
+    for w in doc.strip().split():
+        words[w] = words.setdefault(w, 0)+1
+    x = np.random.randint(np.sqrt(nDocuments)) ## Generate a random mumber beteween [0,sqrt(N))
+    return [(x, t) for t in words.items()]
+
+def wc2_r1_reduce(t): ## WC2 reduce function for round 1
+    t_it = t[1] # Contains (w, c_i(w))
+    words = {}
+    for p in t_it:
+        w = p[0]
+        c_i = p[1]
+        words[w] = words.setdefault(w, 0)+c_i
+    return list(words.items())
+
+
+################
+## Word count 3
+
+def word_count_3(dDoc):
+
+    wordCount = dDoc.flatMap(lambda doc: doc.strip().split(" "))\
+                    .map(lambda w: (w,1))\
+                    .reduceByKey(lambda w1, w2: w1+w2).cache()
+
+    start = time.time()
+    _ = wordCount.count()
+    stop = time.time()
+    ## Return a tuple (time, wordCount)
+    return  (stop-start, wordCount)
+
+## Print the k most frequent words (set k default value to 10)
+def top_k(wordCount, k=10):
+    topk = wordCount.takeOrdered(k, key = lambda x: -x[1])
+    for i in topk:
+        print(i)
+
+def benchmark(dDoc, file_path):
+    lVersion = []
+    lTime = []
+    nBenchmark = 5
+    for i in range(1, nBenchmark):
+        print("Benchmark {}/{}".format(i, nBenchmark))
+        lVersion.append(1)
+        lTime.append(word_count_1(dDoc)[0])
+
+        lVersion.append(2)
+        lTime.append(word_count_2(dDoc)[0])
+
+        lVersion.append(3)
+        lTime.append(word_count_3(dDoc)[0])
+
+    ## For semplicity, convert the 2 list into a DataFrame
+    df = pd.DataFrame({"Version": lVersion, "Time":lTime})
+    df.head()
+    ax = sns.barplot(df["Version"], df["Time"])
+    ax.set_title('Benchmark')
+    ax.set_xlabel("Version")
+    ax.set_ylabel("Time (s)")
+    plt.savefig("Benchmark.pdf")
+
+if __name__=='__main__':
+    main()

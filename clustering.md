@@ -142,7 +142,7 @@ We employ a __coreset-based approach__:
 2. Compute within T the set S of _k_ cluster centers
 3. Compute the final clustering around the center of S
 
-#### Observations
+__Observations__:
 
 * The coreset-based approach is effective when step 1 and 3 can be performed efficiently, and the coreset T contains a good set of centers
 * Coreset are used to confine computations which are too expensive to run on the whole input on small instances
@@ -156,7 +156,7 @@ Let P be a set of N points (N large) from a metric space (M, d), and let _k_ > 1
 2. Gather the coreset T = union of all T_i and run using a single reducer, the Farthest-First Traversal algorithm on T to identify S = {c1,..., c _k_} of _k_ centers
 3. Execute Partition(P, S)
 
-#### Observation
+__Observation__:
 
 Note that in rounds 1 and 2 the Farthest-First traversal algorithm is used to determine only centers and not complete clusterings.
 
@@ -173,3 +173,77 @@ Assume _k_=o(N). By settings _l_ = (N/_k_)^1/2, it is easy to see that the 3-rou
 * The sequential Farthest-First Traversal algorithm is used both to extract the coreset and to compute the final set of centers. It provides a good coreset since it ensures that any point not in the coreset be well represented by some coreset point.
 * The main feature of MR-Farthest-First Traversal is that while only small subsets of the input are processed at once, and many of them in parallel, the final approximation is not too far from the best achievable one.
 * By selecting _k'_ > _k_ centers from each subset Pi in round 1, the quality of the final clustering improves. In fact, it can be shown that when P satisfy certain properties and _k'_ is sufficiently large, MR-Farthest-First Traversal returns a (2+ε)-approximation for any constant ε > 0, still using sublinear local space and linear aggregate space.
+
+## k-means clustering
+
+### General observations on k-means clustering
+
+* In essence, __k-means clustering aims at minimizing cluster variance__. It is typically used in Euclidean spaces and works well for discovering ball-shaped clusters.
+* Because of the quadratic dependence on distances, __k-means clustering is rather sensitive to outliers__. However, the fact that the objective function sums all distances, makes it more robust than the k-center objective to noise and outliers.
+* Some __established algorithms for k-means clustering perform well in practice__ although only recently a rigorous assessment of their performance-accurancy tradeoff has been carried out.
+
+### Propererties of Euclidean spaces
+
+![properties of euclidean spaces](./immagini/pes.png)
+
+![properties of euclidean spaces](./immagini/pes_lemma.png)
+
+__Observation:__ The lemma implies that when seeking a _k_-clustering for points in R^D which minimizes the __kmeans__ objective, the best center to select for each cluster is its centroid (assuming that centers need not necessarily belong to the input pointset)
+
+### Lloyd's algorithm
+
+* Also Known as __k-means algorithm__
+* It focuses on Euclidean spaces and does not require cluster centers to belong to the input pointset
+* It relates to generalization of the Expectation-Maximization algorithm
+
+![pseudo-code k-means](./immagini/sudo_kmeans.png)
+
+#### Theorem
+
+The Lloyd's algorithm always terminates
+
+#### Observations on Lloyd's algorithms
+
+* Lloyd's algorithm may be trapped into a local optimum whose value of the objective function can be much larger than the optimal value. Hence, no guarantee can be proved on its accuracy. Consider the following example and suppose that _k_ = 3.
+
+  ![Lloyd algorithm trap](./immagini/lloyd_trap.png)
+
+  If initially one center falls among the points on the left side, and two centers fall among the points on the right side, it is impossible that one center moves from right to left, hence the two obvious clusters on the left will be considered as just one cluster.
+* While the algorithm surely terminates, the number of iterations can be exponential in the input size
+* Besides the trivial k^N __upper bound__ on the number of iterations, more sophisticated studies proved an __O(N^(kD)) upper bound__ which is improved upone the trivial one, in scenarios where k and D are small
+* Some recent studies proved also a 2^(Ω(sqrt(N))) __lower bound__ on the number of iterations in the worst case
+* Despite the not so promising theoretical results, empirical studies show that, in practice, __the algorithm requires much less than _N_ iterations__, and, __if properly seeded it features guaranteed accurancy__
+* In order to improve performance, without sacrificing the quality of the solution too much, one could stop the algorithm earlier, e.g., when the value of the objective function decreases by a small additive factor.
+
+### Effective initialization
+
+The quality of the solution and the speed of convergence of Lloyd's algorithm depend considerably from the choice of the initial set of centers
+
+## k-means++
+
+Let _P_ be a set of _N_ points in R^D, and let k>1 be an integer
+
+__Algorithm k-means++ computes a initial set _S_ of _k_ centers for _P_ using the following procedure (note that _S_ subset of _P_):
+
+![pseudo-code k-means++](./immagini/sudo_kmeans++.png)
+
+__Observation__:
+
+Although k-means++ already provides a good set of centers for the k-means problem it can be used to provide the initialization for Lloyd's algorithm, whose iterations can only improve the initial solution
+
+### k-means clustering in MapReduce
+
+* In practice, one could initialize the centers using k-means++ and then run a few rounds of Lloyd's algorithm, until the quality of the clustering shows little improvement
+* In order to reduce the number of iterations of k-means++, hence the number of MapReduce rounds, a parallel variant of k-means++ has been proposed: in this variant a coreset of > k centers is selected in a few iterations and then k centers are extracted from the coreset using a weighted version of k-means++ or of any other algorithm for k-means clustering.
+
+## k-median clustering
+
+### Partitioning Around Medoids (PAM) algorithm
+
+* Based on the local search optimization strategy
+* Unlike the k-means algorithm, cluster centers belong to the input pointset and are referred as __medoids__
+
+![pam algorithm](./immagini/pam_input.png)
+
+![pam algorithm](./immagini/pam.png)
+

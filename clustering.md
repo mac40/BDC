@@ -247,3 +247,213 @@ Although k-means++ already provides a good set of centers for the k-means proble
 
 ![pam algorithm](./immagini/pam.png)
 
+### Pam algorithm: analysis
+
+![Theorem](./immagini/pam_analysis.png)
+
+![Remark](./immagini/pam_an_rem.png)
+
+### Observations on k-median clustering
+
+* k-median is less sensitive to outliers than k-center and k-means since all distances are taken into account
+* the PAM algorithm works for any metric space and features provable performance and approximation guarantees. However, it is very slow in practive since in each iteration up to (_N-k_)\*_k_ swaps may need to be checked, and for each swap a new clustering must be computed.
+* a faster alternative is an __adaption of the k-means algorithm__: in each iteration of the main while loop, and for each current cluster C_i the new center (__medoid__) will be the point of C_i which minimizes the sum of the distances to all other points, instead of the centroid used by k-means. This algorithm appears faster and still very accurate in practice
+
+### How to pick the right value for k
+
+* Sometimes, the application provides a target value for _k_
+* If such a target value of _k_ is known:
+  * Find a _k_-clusterings with geometrically larger values of _k_ and stop at _k = x_ if the value of the objective function for _k = x_ does not improve "too much" with respect to _k = x/2_
+  * Refine search of _k_ in [x/2,x]
+
+### Weighted k-median clustering
+
+One can define the following, more general, __weighted variant of the k-median clustering problem__.
+
+Let _P_ be a set of _N_ points from a metric space (M,d), and let _k_ > 1 be an integer. Suppose that for each p in _P_ an integer weight w(p) > 0 is also given. We want to compute the _k_-clustering C = (C_1,C_2,...,C_k;c_1,c_2,...,c_k) of _P_ which minimize the following objective function
+
+![weighted k-median](./immagini/wkm.png)
+
+that is, the average weighted distance of a point from its cluster center.
+
+By considering each point of _P_ as representing w(p) identical copies of p, one can easily devise a __weighted version of the PAM algorithm__ to solve Weighted k-median clustering with the same approximation guarantees.
+
+### k-median clustering in MapReduce: MR-PAM
+
+__The PAM algorithm is impractical for large datasets__.
+
+The following coreset-based MapReduce algorithm (MR-PAM) is more suitable for the big data scenario.
+
+* __Round 1__: Partition _P_ is arbitrarily in _l_ subsets of equal size P_1,P_2,...,P_l and execute the PAM algorithm independently on each P_i. For 1<= i <= l let T_i be the set of _k_ centers of the clustering computed on P_i and, for each p in T_i, let w(p) be the number of points in the cluster centered at p
+* __Round 2__: Gather the coreset T = Union of all T_i of _l\*k_ points, together with their weights. Using a simple reducer, run the weighted version of PAM on T to identify a set S = {c_1,c_2,...,c_k} of _k_ centers
+* __Round 3__: Run Partition(P,S) to return final clustering
+
+### MR-PAM: analysis
+
+Assume _k = o(N)_. By setting _l = sqrt(N/k)_, it is easy to see that the 3-round MR-PAM algorithm requires
+
+* __Local Space__: _M_L = O(sqrt(N\*k)) = o(N)_
+* __Aggregate Space__: _M_A = O(N)_
+
+MR-PAM algorithm is claimed to be a __15-approximation algorithm__. In fact, by using an α-approximation algorithm instead of (weighted) PAM in Rounds 1 and 2, they claim that the final approximation factor is 3α.
+
+In order to ensure polynomial time for the reduce functions, in Round 1 and 2 one should run the version of PAM that stops whenever the improvement in the objective function is below a fixed threshold.
+
+## Cluster Evaluation
+
+### Goals
+
+* __Clustering tendency__: assessment wether the data contain meaningful clusters, namely clusters that are unlikely to occur in a random data.
+* __Unsupervided evaluation__: assessment of the quality of a clustering _without reference to external information_
+* __Supervised evaluation__: assessment of the quality of a clustering _with reference to external information_
+
+### Clustering tendency: Hopkins statistics
+
+Let _P_ be a dataset of _N_ points in some metric space (M,d).
+
+The __Hopkins statistic measures to what extent the points of _P_ can be regarded as taken randomly from _M_. For some fixed _t << N_ (typically _t < 0.1\*N_) let:
+
+![Hopkins statistic](./immagini/hop_stat.png)
+
+![Hopkins statistic](./immagini/hop_stat2.png)
+
+* __H(P) ~ 1: P__ is likely to have a clustering structure
+* __H(P) ~ 0.5: P__ is likely to be a random set
+* __H(P) << 0.5:__ the points of __P__ are likely to be well spaced.
+
+### Unsupervised evaluation
+
+* In the case of k-center, k-means, and k-median, the value of the objective function can be employed to assess the quality of a clustering or the relative quality of two clusterings.
+* For a clustering of a more general type, one could compare the __cohesion__ within clusters against the __separation__ between clusters:
+  * __Cohesion__: average distance between two points in the same clusters, where the average is taken over all such pairs of points
+  * __Separation__: average distance between two points in different clusters, where the average is taken over all such pairs of points
+
+  The larger the gap between cohesion and separation, the better the quality of the clustering
+
+#### Silhouette coefficient
+
+Let _C_ be a clustering of a pointset _P_.
+
+For a point p in _P_ belonging to some cluster C in _C_
+
+![silhouette coefficient](./immagini/sil_coeff.png)
+
+The quality of _C_ can be assessed through the
+
+![average silhouette coefficient](./immagini/avg_sil_coeff.png)
+
+_C is a "good" clustering if __s_C~1__
+
+### Unsupervised evaluation for big data
+
+* Computing cohesion and separation or the average silhouette coefficient exactly requires computing Θ(|_P_|^2) inter-point distances, which becomes prohibitive for very large inputs
+* Cohesion and separation can be approximated by sampling pairs of intra-cluster and inter-cluster points, respectively
+* The __average silhouette coefficient__ can be approximated in several ways:
+  * First a suitable center is computed for each cluster C. Then, for each p in C, the value b_p is approximated with the average distance between p and the points of the cluster C'/C whose center is closest to p
+  * For each p in a cluster C, the value b_p is approximated with the minimum, over all clusters C'!=C, of the average distance between p and a random sample of the points in C'. Also, a_p can be approximated with the average distance between p and a random sample of the points in C
+
+### Supervised evaluation: entropy
+
+Consider a clustering _C_ of a pointset _P_. Suppose that each point _p in P_ is associated with a class label out of a domain of _L_ class labels.
+
+For each cluster C in _C_ and class _i_ let
+
+  ![supervised evaluation: entropy](./immagini/sup_ent.png)
+
+It measures the impurity of C, ranging from 0 to log_2 _L_
+
+![Entropy of a class i](./immagini/entropy.png)
+
+It measures how evenly the points of class _i_ are spread among clusters, ranging from 0 to log_2 _K_, where _K_ is the number of clusters.
+
+It is defined also when points belong to multiple classes
+
+When the number _k_ of clusters and the number _L_ of labels are small, entropies van be determined efficiently even for very large pointsets _P_.
+
+If _k\*L = o(N)_, with _N_ = |_P_| use the following MapReduce algorithm:
+
+1. __Round 1__: Partition _P_ arbitrarily in sqrt(_N_) subsets of equal size _P_1, P_2,...,P_sqrt(N)_. Within each P_j compute, for each class _i_ and cluster C, the number m_{C,i}(j) of points of class _i_ in C intersected P_j
+2. __Round 2__: For each class i and cluster C, gather all m_{C,i}(j)'s and compute their sum
+3. __Round 3__: Gather all m_{C,i}'s and compute the desired entropies.
+
+The algorithm requires _O(sqrt(N)+k\*L)_ local space and linear aggregate space.
+
+## Hierarchical clustering
+
+* Produces a hierarchy of nested clusterings of decreasing cardinalities
+* No need to fix the number of clusters a priori or to choose cluster centers.
+* Two alternative high-level strategies:
+  * Agglomerate: Starts with each input point in a separate cluster and progressively merges suitably selected pairs of clusters. It is the most common strategy.
+  * Divisive: Starts with one cluster containing all points and progressively splits a cluster into two.
+
+### General Agglomerative strategy
+
+Let _P_ be a set of _N_ points in a metric space (M,d).
+
+```pseudo
+Make each point as a distinct singleton cluster
+while (!stopping-condition) do
+  merge the two closest clusters
+return the current set of clusters
+```
+
+__Observation__:
+
+* In order to instantiate the algorithm one needs to decide when to stop and which pair of clusters to merge at each iteration
+* The number of clusters decreases by 1 at each iteration
+* Instead of returning the clustering resulting after the last iteration, one may return the dendogram, i.e., the tree/forest defined by all clusters created at the various iterations
+
+### Merging criterion
+
+How do we measure the distance between two clusters C_1,C_2 so to be able to identify the "two closest clusters" at each iteration?
+
+![merging criterion](./immagini/merge_crit.png)
+
+### Stopping condition
+
+Depending on the application, the merging process can be stopped using one of the following conditions
+
+* A desired number _K_ of clusters obtained
+* The distance between the next pair of clusters to be merged exceeds a fixed cluster threshold _t_
+* The clustering resulting after the next merge would violate some specific condition on the density or cohesion of the clusters
+
+![sample](./immagini/sample_hier_clust.png)
+
+### Time complexity
+
+Consider the execution of the hierarchical clustering strategy for a set _P_ of _N_ points.
+
+At each iteration, maintain with each point the ID of the cluster it belongs to (Θ(_N_))
+
+#### Straightforward implementation
+
+* In each iteration, search for the pair of closest clusters by computing the distances between all pairs of points
+* Θ(_N_^2) time per iteration, hence Θ(_N_^3) overall time, if full hierarchy is sought
+* Θ(_N_) space, if distances are computed on-the-fly, while Θ(_N_^2) space if all distances are precomputed
+
+#### Improved implementation
+
+* Precompute all Θ(_N_^2) distances and store each pair of points (x,y) into a min-heap _H_, using d(x,y) as a key
+* Extract, one after the other, the pairs of points from _H_ in increasing order of distance. After extracting pair(x,y), if the two points belong to different clusters then merge the two clusters
+* The initialization requires Θ(_N_^2) time and space. Each extraction from _H_ takes O(log _N_) time, while each merge takes O(_N_) time.
+
+  Thus, the implementation requires
+
+  O(_N_^2 log _N_) overall running time and Θ(_N_^2) space.
+
+##### Remark
+
+* More efficient implementations for both single and complete linkage exists
+
+### Observation on Hierarchical Clustering
+
+#### Pros
+
+* Useful when a hierarchical taxonomy is shought and/or a precise number of clusters cannot be established apriori
+* Can capture clusters of non-elliptical shapes
+
+#### Cons
+
+* Does not optimize any specific objective function
+* Sensitive to noise
+* Computationally expesive. The development of efficient hierarchical clustering algorithms for very large pointsets is still an open research problem

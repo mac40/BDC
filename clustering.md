@@ -19,7 +19,7 @@ Typically, the input of a clustering problem consists of a set of points from a 
 
 A __metric space__ is an ordered pair (M, d) where M is a set and d(.) is a metric on M, i.e., a function
 
-    d: M \* M->R
+    d: M * M->R
 
 such that for every x, y, z in M the following rules holds
 

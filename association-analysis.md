@@ -164,4 +164,85 @@ A large body of litterature has investigated several additional strategies to op
 
   ![consequence](./immagini/immcons.png)
 
-  Thus for each itemset _Z_ it is convenient to check rules with RHS of progressively increasing size
+  Thus for each itemset _Z_ it is convenient to check rules with RHS of progressively increasing size2
+
+### Algorithm for mining association rules
+
+Let _O_ = set of frequent itemset and their supports
+
+![association rule algorithm](./immagini/assrulealg1.png)
+
+![association rule algorithm](./immagini/assrulealg2.png)
+
+#### Efficiency of the A.R. algorithm
+
+* The algorithm does not require access to the dataset _T_ but only to the frequent itemsets and their supports. If the frequent itemsets are not too many, as one qould hope when the support threshold is properly chosen, avoiding the access to _T_ may yield substantial performance gains.
+* The use of APRIORI-GEN avoids that for any frequent itemset the confidence of an extremely large number of rules be checked
+* It can be easily shown that the algorithm can be implemented in time polynomial in both the input size and output size
+
+## Frequent itemsets mining for big data
+
+When the dataset _T_ is very large one can follow two approaches
+
+1. __Partition-based approach__: avoid multiple passes over the dataset by __partitioning _T_ into subsets__, mining frequent itemsets independently in each subset, and combining the results
+2. __Sampling approach__: compute the frequent itemsets from a small sample of _T_ and show that they provide a _suitable approximation_ to the exact set.
+
+### Partition-based approach
+
+1. Partition _T_ arbitrarily into _K_ subsets of _O(N/K) transactions each, and compute the set of frequent itemsets with regard to minsup independently in each subset
+2. Gather al frequent itemsets computed in round 1 and eliminate duplicates. Call Φ the resulting set of itemsets
+3. For every 0 < j < _K_ independently do the following:
+
+  gather a copy of Φ and _T_j_ and compute, for each _X in Φ_, the number of transactions of _T_j_ that contain _X_ and call it _σ(X,j)_
+4. For each _X in Φ_, gather all _σ(X,j)_, compute the final support and output _X_ if Supp(X)>=minsup
+
+### Partition-based approach: analysis
+
+* __Correctness__: it follows from the fact that each itemset frequent in _T_ must be frequent in some _T_j_. In other words, Φ contains all final frequent itemsets, although it may contain many more
+* __Number of rounds__: 4
+* __Space requirements__: they mainly depend on the size of Φ, which cannot be easily predictedm and the algorithm used to extract the frequent itemsets in the first round
+
+__Remark__: while the algorithm may work well in practice, it does not feature strong theoretical guarantees
+
+### Sampling-based approach
+
+![definition sampling based approach](./immagini/defsamplbasedappr.png)
+
+* Condition (1) ensures that the approximate set C comprises all true frequent itemsets
+* Condition (2) ensures that: (a) C does not contain intemsets of very low support; and (b) for each itemset _X_ such that _(X,s_X) in C, s_X_ is a good estimate of its support.
+
+Let _T_ be a dataset of _N_ transactions over _I_, and minsup in (0,1] a support threshold. Let also θ(minsup) < minsup be a suitably lower support threshold
+
+* Let _S subset T_ be a sample drawn at random with replacement with uniform probability and with replacement
+* Return the set of pairs
+
+  ![set of pairs](./immagini/setofpairs.png)
+
+  where F_{S,θ(minsup)} is the set of frequent itemsets with regard to _S_ and θ(minsup)
+
+![theorem Riondato-Upfal](./immagini/Riondato_Upfal.png)
+
+### VC-dimension
+
+![vc-dimension definition](./immagini/vcdimension.png)
+
+#### Analysis of sampling-based approach
+
+![Lemma](./immagini/samplemma.png)
+
+A dataset _T_ of transactions over _I_ can be seen as a range space (D,R):
+
+* _D = T_
+* _R = {T_X: X subset I and X != emptyset}_, where _T_X_ is the set of transactions that contain _X_
+
+It can be shown that the VC-dimension of (D,R) is <= _h_, where _h_ is the maximum transaction length
+
+__Observations__:
+
+* The size of the sample is independent of the support threshold minsup and of the number _N_ of transactions. It only depends on the apporximation guarantee embodied in the parameters ε, δ, and on the max transaction length _h_, which is often quite low.
+* There are bounds on the VC-dimension tighter than _h_
+* The sample-based algorithm yields a 2-round MapReduce algorithm:
+
+  in first round the sample of suitable size is extracted;
+
+  in the second round the approximate set of frequent itemsets is extracted from the sample within one reducer

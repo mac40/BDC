@@ -164,7 +164,7 @@ A large body of litterature has investigated several additional strategies to op
 
   ![consequence](./immagini/immcons.png)
 
-  Thus for each itemset _Z_ it is convenient to check rules with RHS of progressively increasing size2
+  Thus for each itemset _Z_ it is convenient to check rules with RHS of progressively increasing size
 
 ### Algorithm for mining association rules
 
@@ -246,3 +246,124 @@ __Observations__:
   in first round the sample of suitable size is extracted;
 
   in the second round the approximate set of frequent itemsets is extracted from the sample within one reducer
+
+## Limitations of the Support/Confidence framework
+
+1. __Redundancy__: many of the returned patterns may refer to the same piece of information
+2. __Difficult control of output size__: it is hard to predict how many patterns will be returned for given support/confidence threshold
+3. __Significance__: are the returned patterns significant/interesting?
+
+## Closed Itemsets
+
+__GOAL__: Devise a lossless succint representation of the frequent itemsets.
+
+Consider a dataset _T_ of _N_ transactions ove the set of itemsets _I_, and a support threshold _minsup_.
+
+![def closed itemsets](./immagini/closeditemsets.png)
+
+![notation](./immagini/clitstnot.png)
+
+__Observation__: the empty itemset, whose support is 1, is closed if and only if it is the only itemset of support 1
+
+## Maximal Itemsets
+
+![def maximal itemsets](./immagini/maximalitemsets.png)
+
+### Closed/maximal itemsets
+
+![closed/maximal itemsets](./immagini/clomaxitemsets.png)
+
+__Observations__:
+
+* __MAX and CLO-F provide succint representations of F__: from the above properties we immediately conclude that the set of frequent itemsets _coincides_ with the set of all subsets of the maximal itemsets, or, equivalently, with the set of all subsets of the frequent closed itemsets.
+* __MAX provides a lossy representation of F__: in general, the support of a frequent itemset _cannot be derived_ from the maximal itemsets and their supports.
+* __CLO-F provides a lossless representation of F__: the support of any frequent itemset can be derived from the frequent closed itemsets and their supports.
+
+## Representativity of closed itemsets
+
+For _X subset of I_, let _T_x_ denote the set of transactions where _X_ occurs
+
+![def closure](./immagini/defclosure.png)
+
+![theorem closure](./immagini/theoremclosure.png)
+
+![corollary](./immagini/corollaryclosure.png)
+
+__Observations__:
+
+* A consequence of the previous corollary is that from the frequent closed itemsets and their supports one can derive all frequent itemsets and their supports. In the sense, frequent closed itemsets and their supports provide a lossless representation of the frequent itemsets and their supports.
+* Each (frequent) closed itemset _Y_ can be regarded as a representative of all those itemsets _X_ such that __Closure(X) = Y__
+* There exist efficient algorithms for mining maximal or frequent closed itemsets
+* Notions of closure similar to the ones used for itemsets are employed in other mining contexts
+
+## Exponentiality of maximal/frequent closed itemsets
+
+Although maximal and frequent closed itemsets provide in practice succint representations of the frequent itemsets, still there are pathological instances where the number of maximal itemsets, hence the number of frequent closed itemsets is exponential in the input size. The following exercise provides an example
+
+## Top-_K_ frequent (closed) itemsets
+
+How about if we impose explicitly a limit on the output size?
+
+Let _T_ be a dataset of _N_ transactions over a set _I_ of _d_ items. Let F_{T,s} and CLO-F_{T,s} denote, respectively, the sets of frequent itemsets and frequent closed itemsets with regard to threshold _s_. For _K_ > 0 define
+
+![top-k frequent itemsets](./immagini/top_k_itemsets.png)
+
+__Observations__:
+
+* _K_ is the target number of patterns, but the actual number of Top-_K_ frequent (closed) itemsets could be larger than _K_
+* How well does the parameter _K_ controls the output size?
+  * The next theorem shows that for Top-_K_ frequent itemsets, _K_ provides a somewhat tight control on the output size
+
+![Theorem](./immagini/theo_top_K.png)
+
+## Significance
+
+How do we measure the significance/interest of itemsets/rules?
+
+* __Subjective measures__: user defined criteria based on domain knowledge.
+* __Objective measures__: quantitative criteria, often based on statistics, such as support and confidence, for which the user fixes suitable thresholds
+
+Are supoort/confidence adequate to capture significance? In general, the answer is "NO", but with some amendments their effectiveness can be improved
+
+## Beyond Confidence
+
+Consider a dataset with 1000 transactions from a supermarket and let the following __contingency table__
+
+![contingency table](./immagini/conttable.png)
+
+The table should be read as follows:
+
+* 150 transactions contain tea and coffee
+* 50 transactions contain tea but not coffee
+* 650 transactions contain coffee but no tea
+* 150 transactions contain neither tea nor coffee
+* Altogether, of the 1000 transactions, 200 contain tea, 800 do not contain tea, 800 contain coffee, and 200 do not contain coffee
+
+Consider rule
+
+  r: tea->coffee
+
+We have
+
+* Supp(r) = 0.15 and Conf(r) = 0.75
+* Supp(coffee) = 0.8
+
+__Observation__: While Conf(r) seems relatively high, in fact a random customer is more likely to buy coffee than a customer who bought tea
+
+## Lift
+
+The following measure is often used to assess the significance of high-confidence rules.
+
+![definition lift](./immagini/deflift.png)
+
+* Lift(r) is sometimes referred to as the _Interest Factor_ of the pair of itemsets _X,Y_.
+* The denominator represent the expected support of _X union Y_ would _X_ and _Y_ occur independently in the transactions
+* Lift(r) ~ 1 => _X_ and _Y_ are uncorrelated
+* Lift(r) >> 1 => _X_ and _Y_ are positively correlated
+* Lift(r) << 1 => _X_ and _Y_ are negatively correlated
+
+Usually, association rules are mined with the traditional support-confidence framework and then they are sorted by decreasing lift. Those rules with high lift are selected as significant.
+
+In the previous example, Lift(tea->coffee) = 0.9375, hence rule tea->coffee, altough it has high confidence, cannot be considered significant
+
+Lift is symmetric with respect to the two sides of the rule. There exists asymmetric measures to assess the significance association rules.

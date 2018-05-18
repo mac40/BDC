@@ -185,4 +185,35 @@ In these scenarios, __giving up exact solutions may greately improve efficiency_
 
 ## Maximum pairwise distance
 
-Suppose that we are given a set _S_ of _N_ points from some metric space and we want to determine the maximum distance between two points
+Suppose that we are given a set _S_ of _N_ points from some metric space and we want to determine the maximum distance between two points, for a given distance function d(.,.)
+
+__Input__: Set _S_ of _N_ points represented by pairs _(i, x_i)_, for 0<=i<=_N_, where x_i is the i-th point
+
+__Output__: d_max = max d(x_i,x_j)
+
+![maximum pairwise distance](./immagini/maxpairdist.png)
+
+We can substantially reduce the aggregate space requirements if we tolerate a factor 2 error in the estimate of d_max. For an arbitrary point x_i define
+
+![lemma pairwise distance](./immagini/lemmapairdist.png)
+
+![round pairwise distance](./immagini/roundpwdist.png)
+
+### Trading rounds for space efficiency
+
+__Minimizing the number of rounds may sometimes force large space requirements__. In these cases, one could aim at devising algorithms which feature suitable tradeoffs between local and/or aggregate space requirements and number of rounds.
+
+We already saw an example of this kind of tradeoffs.
+
+### Exploiting samples
+
+The first question that should be asked when facing a big-data processing task is the following
+
+Can small subsets of the data help speeding up the task?
+
+In many cases, the answer is YES! Specifically, a small sample, suitably extracted, could be exploited for the following purposes
+
+* __To subdivide the dataset in smaller subsets__ to be analyzed separately
+* To provide a __succint yet accurate representation of the whole dataset__, which contains a good solution to the problem and filters out noise and outliers, thus allowing the execution of the task on the sample
+
+## Sorting

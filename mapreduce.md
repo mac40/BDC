@@ -141,12 +141,12 @@ This can be done with:
 
 __Idea__: partition intermediate pairs in o(N) groups and compute counts in two stages
 
-### Round 1
+__Round 1__:
 
 * __Map phase__: for each document _D_i_, produce the intermediate pairs (x,(w,c_i(w))), one for every word _w in D_i_, where _x_ is a random value in [0,sqrt(_N_)) and c_i(w) is the number of occurrences of _w_ in _D_i_
 * __Reduce phase__: For each key _x_ gather all pairs (x,(w,c_i(w))), and for each word _w_ occurring in these pairs produce the pair (w,c(x,w)) where c(x,w) = sum c_i(w). Now, _w_ is the key for (w,c(x,w))
 
-### Round 2
+__Round 2__:
 
 * __Map phase__: identity function
 * __Reduce phase__: for each word _w_, gather the at most sqrt(_N_) pairs (w,c(x,w)) resulting at the end of the previous round, and produce the pair (w,sum c(x,w))
@@ -217,3 +217,37 @@ In many cases, the answer is YES! Specifically, a small sample, suitably extract
 * To provide a __succint yet accurate representation of the whole dataset__, which contains a good solution to the problem and filters out noise and outliers, thus allowing the execution of the task on the sample
 
 ## Sorting
+
+![sorting](./immagini/sortingmr.png)
+
+__MR Samplesort__ algorithm. The algorithm is based on the following idea:
+
+* Fix a suitable integral design parameter _K_
+* Randomly select some objects (_K_ on average) as splitters
+* Partition the object into subsets based on the ordered sequence of splitters
+* Sort each subset separately and compute the final ranks
+
+### MR Samplesort
+
+__Round 1__:
+
+* __Map phase__: for each pair (i,s_i) do the following: create the intermediate pair (i mod _K_, (0,s_i)) and, with probability p=_K_/_N_ independently of other objects, select s_i as a splitter. If s_i is selected as splitter then create _K_ additional intermediate pairs (j,(1,s_i)), with 0<=j<_K_. Suppose that _t_ objects are selected as splitters
+* __Reduce phase__: for 0<=j<_K_ do the following: gather all intermediate and splitter pairs with key j; sort the splitters; for every o<=_l_<=_t_ and every intermediate pair (j,(0,s)), with x_l< s< x_{l+1}, produce the pair (l,s) with key _l_
+
+__Round 2__:
+
+* __Map phase__: identity
+* __Reduce phase__: for every 0< _l_ < _t_ gather, from the output of the previous round, the set of pairs S^_l_ = {(_l_,s)}, compute N_ _l_, and create t+1 replicas of N_ _l_
+
+__Round 3__:
+
+* __Map phase__: identity
+* __Reduce phase__: for every 0<= _l_ <= _t_ do the following: gather S^_l_ and the values _N_ _0, _N_ _1, ..., _N_ _t; sort S^_l_; and compute the final output pairs for the objects in S^_l_ whose ranks start from 1+{sum from 0 to _l_-1}_N_ _h
+
+### Analysis of MR Samplesort
+
+![analysis of MR Samplesort](./immagini/anaMRSamplesort.png)
+
+![Lemma](./immagini/mrslemma.png)
+
+![Theorem](./immagini/mrstheorem.png)

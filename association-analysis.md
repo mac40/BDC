@@ -367,3 +367,17 @@ Usually, association rules are mined with the traditional support-confidence fra
 In the previous example, Lift(tea->coffee) = 0.9375, hence rule tea->coffee, altough it has high confidence, cannot be considered significant
 
 Lift is symmetric with respect to the two sides of the rule. There exists asymmetric measures to assess the significance association rules.
+
+## Blackboard
+
+given _T_ and _I_
+
+_X, Y subset I_ closed
+
+_Z_ = _X intersect Y_
+
+_X_ and _Y_ closed => _Z_ closed
+
+given _X_ and _X'_ subset _X_
+
+Supp(_X_) > Supp(_X'_)

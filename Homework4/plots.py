@@ -64,9 +64,10 @@ def main():
 
     _, ax2 = plt.subplots(1, 1)
     finalex_centers_blocks(file, ax2)
-    plt.xlabel("Centers + Partitions")
-    plt.ylabel("RunSequential Execution Time")
+    plt.xlabel("Centers * Partitions")
+    plt.ylabel("RunSequential Execution Time(s)")
     plt.legend()
+    plt.savefig("centers_partitions_runSequential.png")
     plt.show()
 
 

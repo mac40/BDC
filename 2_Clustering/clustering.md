@@ -311,7 +311,7 @@ In order to ensure polynomial time for the reduce functions, in Round 1 and 2 on
 
 Let _P_ be a dataset of _N_ points in some metric space (M,d).
 
-The __Hopkins statistic measures to what extent the points of _P_ can be regarded as taken randomly from _M_. For some fixed _t << N_ (typically _t < 0.1\*N_) let:
+The __Hopkins statistic__ measures to what extent the points of _P_ can be regarded as taken randomly from _M_. For some fixed _t << N_ (typically _t < 0.1\*N_) let:
 
 ![Hopkins statistic](../immagini/hop_stat.png)
 
